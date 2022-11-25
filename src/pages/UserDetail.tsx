@@ -4,6 +4,7 @@ import { AppBar, Button, Container, CssBaseline, Dialog, DialogActions, DialogCo
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import AlertDialog from '../component/AlertDialog'
 import { config, token } from '../config/config'
 import { setUser, setUserPosts, usersSelector } from '../features/usersSlice'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
@@ -130,22 +131,12 @@ const UserDetail = () => {
             </TableContainer>
         </Paper>
 
-        <Dialog
-        open={openDeletePostDialog}
-        onClose={() => setOpenDeletePostDialog(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          {"ARE YOU SURE TO DELETE THIS POST?"}
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setOpenDeletePostDialog(false)}>No</Button>
-          <Button onClick={() => handleDeletePost(postId)}>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
+        <AlertDialog 
+            title='ARE YOU SURE TO DELETE THIS POST?'
+            onClose={() => setOpenDeletePostDialog(false)}
+            isOpen={openDeletePostDialog}
+            onConfirm={() => handleDeletePost(postId)}
+        />
   
       <Dialog open={openCreatePostDialog} onClose={() => setOpenCreatePostDialog(false)} fullWidth maxWidth="sm">
         <DialogTitle>Buat Post</DialogTitle>

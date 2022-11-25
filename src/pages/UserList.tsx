@@ -1,12 +1,13 @@
-import { Button, Container, CssBaseline, Dialog, DialogActions, DialogTitle, Grid, Paper, Table, TableBody, 
-    TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
+import { Button, Container, CssBaseline, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, 
+    TablePagination, TableRow } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import axios, { AxiosResponseHeaders } from "axios"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import UserDialogInput from '../component/UserDialogInput';
+import AlertDialog from '../component/AlertDialog';
+import UserInputDialog from '../component/UserInputDialog';
 import { config, token } from '../config/config';
 import { setUsers, User, usersSelector } from '../features/usersSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -183,24 +184,14 @@ const UserList = () => {
                 />
             </Paper>
 
-            <Dialog
-                open={openDeleteUserDialog}
+            <AlertDialog 
+                title='ARE YOU SURE TO DELETE THIS USER?'
                 onClose={() => setOpenDeleteUserDialog(false)}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
-            >
-                <DialogTitle id="alert-dialog-title">
-                    {"ARE YOU SURE TO DELETE THIS USER?"}
-                </DialogTitle>
-                <DialogActions>
-                <Button onClick={() => setOpenDeleteUserDialog(false)}>No</Button>
-                <Button onClick={() => handleDeleteUser(userId)}>
-                    Yes
-                </Button>
-                </DialogActions>
-            </Dialog>
+                isOpen={openDeleteUserDialog}
+                onConfirm={() => handleDeleteUser(userId)}
+            />
 
-            <UserDialogInput 
+            <UserInputDialog 
                 title='Buat Pengguna'
                 isOpen={openCreateUserDialog}
                 handleChange={(e) => handleChangeCreateUser(e)}
@@ -211,7 +202,7 @@ const UserList = () => {
                 disabled={!newUser.email || !newUser.gender || !newUser.name || !newUser.status}
             />
 
-            <UserDialogInput 
+            <UserInputDialog 
                 title='Update Pengguna'
                 isOpen={openUpdateUserDialog}
                 handleChange={(e) => handleChangeUpdateUser(e)}
