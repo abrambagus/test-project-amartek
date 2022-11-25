@@ -108,11 +108,11 @@ const TablePaginationActions = (props: TablePaginationActionsProps) => {
   }
   
 const UserList = () => {
-
     const [page, setPage] = useState<number>(0);
     const [openDeleteUserDialog, setOpenDeleteUserDialog] = useState<boolean>(false);
     const [openCreateUserDialog, setOpenCreateUserDialog] = useState<boolean>(false);
     const [openUpdateUserDialog, setOpenUpdateUserDialog] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userId, setUserId] = useState<number | undefined>();
     const [headers, setHeaders] = useState<AxiosResponseHeaders | 
     Partial<Record<string, string> & { "set-cookie"?: string[] | undefined; }>>();
@@ -138,9 +138,11 @@ const UserList = () => {
       };
 
     const handleDeleteUser = (id: number | undefined) => {
+        setIsLoading(true)
         axios.delete(`users/${id}`, config)
-        .then((res) => {console.log(res.data); setOpenDeleteUserDialog(false); window.location.reload()})
+        .then((res) => {console.log(res.data); setOpenDeleteUserDialog(false); navigate(0);})
         .catch((err) => console.log(err))
+        .finally(() => setIsLoading(false))
       };
 
     useEffect(()=>{
@@ -166,15 +168,19 @@ const UserList = () => {
     };
 
     const handleCreateUser = () => {
+        setIsLoading(true)
         axios.post("users", newUser, config)
-        .then((res) => {console.log(res.data); setOpenCreateUserDialog(false); window.location.reload()})
+        .then((res) => {console.log(res.data); setOpenCreateUserDialog(false); navigate(0);})
         .catch((err) => console.log(err))
+        .finally(() => setIsLoading(false))
     }
 
     const handleUpdateUser = (id: number | undefined) => {
+        setIsLoading(true)
         axios.patch(`users/${id}`, updateUser, config)
-        .then((res) => {console.log(res.data); setOpenUpdateUserDialog(false); window.location.reload()})
+        .then((res) => {console.log(res.data); setOpenUpdateUserDialog(false); navigate(0);})
         .catch((err) => console.log(err))
+        .finally(() => setIsLoading(false))
 
         console.log(updateUser)
     }
@@ -258,6 +264,7 @@ const UserList = () => {
                 onClose={() => setOpenDeleteUserDialog(false)}
                 isOpen={openDeleteUserDialog}
                 onConfirm={() => handleDeleteUser(userId)}
+                isLoading={isLoading}
             />
 
             <UserInputDialog 
@@ -269,6 +276,7 @@ const UserList = () => {
                 onClose={() => setOpenCreateUserDialog(false)}
                 onSave={handleCreateUser}
                 disabled={!newUser.email || !newUser.gender || !newUser.name || !newUser.status}
+                isLoading={isLoading}
             />
 
             <UserInputDialog 
@@ -280,6 +288,7 @@ const UserList = () => {
                 onClose={() => setOpenUpdateUserDialog(false)}
                 onSave={() => handleUpdateUser(userId)}
                 disabled={!updateUser?.email && !updateUser?.gender && !updateUser?.name && !updateUser?.status}
+                isLoading={isLoading}
             />
         </Container>
     </>

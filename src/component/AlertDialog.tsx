@@ -1,3 +1,4 @@
+import { LoadingButton } from "@mui/lab";
 import { Button, Dialog, DialogActions, DialogTitle } from "@mui/material"
 
 interface AlertDialogProps {
@@ -5,9 +6,10 @@ interface AlertDialogProps {
     onClose: () => void;
     isOpen: boolean;
     onConfirm: () => void;
+    isLoading: boolean;
 }
 
-const AlertDialog = ({title, onClose, isOpen, onConfirm}: AlertDialogProps) => (
+const AlertDialog = ({title, onClose, isOpen, onConfirm, isLoading}: AlertDialogProps) => (
     <Dialog
     open={isOpen}
     onClose={onClose}
@@ -19,9 +21,7 @@ const AlertDialog = ({title, onClose, isOpen, onConfirm}: AlertDialogProps) => (
         </DialogTitle>
         <DialogActions>
             <Button onClick={onClose}>No</Button>
-            <Button onClick={onConfirm}>
-                Yes
-            </Button>
+            <LoadingButton onClick={onConfirm} loading={isLoading}>Yes</LoadingButton>
         </DialogActions>
     </Dialog>
 )

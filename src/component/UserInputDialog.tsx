@@ -1,3 +1,4 @@
+import { LoadingButton } from '@mui/lab';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, 
     FormLabel, Radio, RadioGroup, TextField } from '@mui/material'
 
@@ -10,10 +11,11 @@ interface UserInputDialogProps {
     isOpen: boolean;
     onSave: () => void;
     disabled: boolean;
+    isLoading: boolean;
 }
 
-const UserInputDialog = ({title, handleChange, radioGenderValue, radioStatusValue, onClose, isOpen, onSave, disabled} 
-    : UserInputDialogProps) => (
+const UserInputDialog = ({title, handleChange, radioGenderValue, radioStatusValue, onClose, isOpen, onSave, 
+    disabled, isLoading} : UserInputDialogProps) => (
     <Dialog open={isOpen} onClose={onClose} fullWidth maxWidth="sm">
         <DialogTitle>{title}</DialogTitle>
         <DialogContent>
@@ -60,7 +62,7 @@ const UserInputDialog = ({title, handleChange, radioGenderValue, radioStatusValu
         </DialogContent>
         <DialogActions>
             <Button onClick={onClose}>Batal</Button>
-            <Button onClick={onSave} disabled={disabled}>Simpan</Button>
+            <LoadingButton onClick={onSave} disabled={disabled} loading={isLoading}>Simpan</LoadingButton>
         </DialogActions>
     </Dialog>
 )

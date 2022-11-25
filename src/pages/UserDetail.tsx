@@ -1,21 +1,23 @@
+import { LoadingButton } from '@mui/lab'
 import { AppBar, Button, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogTitle, Grid, 
   Paper, Table, TableBody, TableCell, TableContainer, 
   TableHead, TableRow, TextField, Toolbar, Typography } from '@mui/material'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import AlertDialog from '../component/AlertDialog'
 import { config, token } from '../config/config'
 import { setUser, setUserPosts, usersSelector } from '../features/usersSlice'
 import { useAppDispatch, useAppSelector } from '../redux/hooks'
 
 const UserDetail = () => {
-
+  const navigate = useNavigate();
   const { id } = useParams();
   const dispatch = useAppDispatch()
   const stateUser = useAppSelector(usersSelector) 
   const [openDeletePostDialog, setOpenDeletePostDialog] = useState <boolean>(false)
   const [openCreatePostDialog, setOpenCreatePostDialog] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [postId, setPostId] = useState<number>(0)
   const [title, setTitle] = useState<string>('')
   const [body, setBody] = useState<string>('')
@@ -49,18 +51,22 @@ const UserDetail = () => {
   }, [dispatch, id])
 
   const handleDeletePost = (id: number) => {
+    setIsLoading(true)
     axios.delete(`posts/${id}`, config)
-      .then((res) => {console.log(res.data); setOpenDeletePostDialog(false); window.location.reload()})
+      .then((res) => {console.log(res.data); setOpenDeletePostDialog(false); navigate(0);})
       .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false))
   }
 
   const handleCreatePost = () => {
+    setIsLoading(true)
     axios.post(`users/${id}/posts`, {
       title: title,
       body: body
     }, config)
-    .then((res) => {console.log(res.data); setOpenCreatePostDialog(false); window.location.reload()})
+    .then((res) => {console.log(res.data); setOpenCreatePostDialog(false); navigate(0);})
     .catch((err) => console.log(err))
+    .finally(() => setIsLoading(false))
   }
 
   return (
@@ -136,6 +142,7 @@ const UserDetail = () => {
             onClose={() => setOpenDeletePostDialog(false)}
             isOpen={openDeletePostDialog}
             onConfirm={() => handleDeletePost(postId)}
+            isLoading={isLoading}
         />
   
       <Dialog open={openCreatePostDialog} onClose={() => setOpenCreatePostDialog(false)} fullWidth maxWidth="sm">
@@ -166,7 +173,7 @@ const UserDetail = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenCreatePostDialog(false)}>Batal</Button>
-          <Button onClick={handleCreatePost} disabled={!title || !body}>Simpan</Button>
+          <LoadingButton onClick={handleCreatePost} disabled={!title || !body} loading={isLoading}>Simpan</LoadingButton>
         </DialogActions>
       </Dialog>
       </Container>
