@@ -13,11 +13,11 @@ const UserDetail = () => {
   const { id } = useParams();
   const dispatch = useAppDispatch()
   const stateUser = useAppSelector(usersSelector) 
-  const [openDeletePostDialog, setOpenDeletePostDialog] = useState(false)
-  const [openCreatePostDialog, setOpenCreatePostDialog] = useState(false)
-  const [postId, setPostId] = useState(0)
-  const [title, setTitle] = useState('')
-  const [body, setBody] = useState('')
+  const [openDeletePostDialog, setOpenDeletePostDialog] = useState <boolean>(false)
+  const [openCreatePostDialog, setOpenCreatePostDialog] = useState<boolean>(false)
+  const [postId, setPostId] = useState<number>(0)
+  const [title, setTitle] = useState<string>('')
+  const [body, setBody] = useState<string>('')
 
 
   useEffect(() => {

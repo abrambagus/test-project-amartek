@@ -1,11 +1,12 @@
-import { Button, Container, CssBaseline, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormLabel, Grid, Paper, Radio, RadioGroup, Table, TableBody, 
-    TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField } from '@mui/material';
+import { Button, Container, CssBaseline, Dialog, DialogActions, DialogTitle, Grid, Paper, Table, TableBody, 
+    TableCell, TableContainer, TableHead, TablePagination, TableRow } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import axios, { AxiosResponseHeaders } from "axios"
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import UserDialogInput from '../component/UserDialogInput';
 import { config, token } from '../config/config';
 import { setUsers, User, usersSelector } from '../features/usersSlice';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -105,6 +106,8 @@ const UserList = () => {
         axios.patch(`users/${id}`, updateUser, config)
         .then((res) => {console.log(res.data); setOpenUpdateUserDialog(false); window.location.reload()})
         .catch((err) => console.log(err))
+
+        console.log(updateUser)
     }
 
     return (
@@ -197,106 +200,27 @@ const UserList = () => {
                 </DialogActions>
             </Dialog>
 
-            <Dialog open={openCreateUserDialog} onClose={() => setOpenCreateUserDialog(false)} fullWidth maxWidth="sm">
-                <DialogTitle>Buat Pengguna</DialogTitle>
-                <DialogContent>
-                <TextField
-                    required
-                    margin="dense"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                    onChange={handleChangeCreateUser}
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="name"
-                    label="Name"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    onChange={handleChangeCreateUser}
-                />
-                <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
-                <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="gender"
-                    value={newUser.gender}
-                    onChange={handleChangeCreateUser}
-                >
-                    <FormControlLabel value="female" control={<Radio />} label="Female" />
-                    <FormControlLabel value="male" control={<Radio />} label="Male" />
-                </RadioGroup>
-                <FormLabel id="demo-controlled-radio-buttons-group">Status</FormLabel>
-                <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="status"
-                    value={newUser.status}
-                    onChange={handleChangeCreateUser}
-                >
-                    <FormControlLabel value="active" control={<Radio />} label="Active" />
-                    <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
-                </RadioGroup>
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={() => setOpenCreateUserDialog(false)}>Batal</Button>
-                <Button onClick={handleCreateUser} disabled={!newUser.email || !newUser.gender || !newUser.name 
-                || !newUser.status }>Simpan</Button>
-                </DialogActions>
-            </Dialog>
-            
-            <Dialog open={openUpdateUserDialog} onClose={() => setOpenUpdateUserDialog(false)} fullWidth maxWidth="sm">
-                <DialogTitle>Update Pengguna</DialogTitle>
-                <DialogContent>
-                <TextField
-                    required
-                    margin="dense"
-                    name="email"
-                    label="Email"
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                    onChange={handleChangeUpdateUser}
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="name"
-                    label="Name"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    onChange={handleChangeUpdateUser}
-                />
-                <FormLabel id="demo-controlled-radio-buttons-group">Gender</FormLabel>
-                <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="gender"
-                    value={updateUser ? updateUser.gender : " "}
-                    onChange={handleChangeUpdateUser}
-                >
-                    <FormControlLabel value="female" control={<Radio />} label="Female" />
-                    <FormControlLabel value="male" control={<Radio />} label="Male" />
-                </RadioGroup>
-                <FormLabel id="demo-controlled-radio-buttons-group">Status</FormLabel>
-                <RadioGroup
-                    aria-labelledby="demo-controlled-radio-buttons-group"
-                    name="status"
-                    value={updateUser ? updateUser.status : " "}
-                    onChange={handleChangeUpdateUser}
-                >
-                    <FormControlLabel value="active" control={<Radio />} label="Active" />
-                    <FormControlLabel value="inactive" control={<Radio />} label="Inactive" />
-                </RadioGroup>
-                </DialogContent>
-                <DialogActions>
-                <Button onClick={() => setOpenUpdateUserDialog(false)}>Batal</Button>
-                <Button onClick={() => handleUpdateUser(userId)}>Simpan</Button>
-                </DialogActions>
-            </Dialog>
+            <UserDialogInput 
+                title='Buat Pengguna'
+                isOpen={openCreateUserDialog}
+                handleChange={(e) => handleChangeCreateUser(e)}
+                radioGenderValue={newUser.gender}
+                radioStatusValue={newUser.status}
+                onClose={() => setOpenCreateUserDialog(false)}
+                onSave={handleCreateUser}
+                disabled={!newUser.email || !newUser.gender || !newUser.name || !newUser.status}
+            />
+
+            <UserDialogInput 
+                title='Update Pengguna'
+                isOpen={openUpdateUserDialog}
+                handleChange={(e) => handleChangeUpdateUser(e)}
+                radioGenderValue={updateUser?.gender}
+                radioStatusValue={updateUser?.status}
+                onClose={() => setOpenUpdateUserDialog(false)}
+                onSave={() => handleUpdateUser(userId)}
+                disabled={!updateUser?.email && !updateUser?.gender && !updateUser?.name && !updateUser?.status}
+            />
         </Container>
     </>
     )
